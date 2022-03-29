@@ -7,7 +7,6 @@ def deploy_lottery():
     account = get_account()
     lottery = Lottery.deploy(
         get_contract("eth_usd_price_feed").address,
-        Oracle[-1],
         {"from": account},
         publish_source=config["networks"][network.show_active()].get("verify", False),
     )
@@ -34,7 +33,7 @@ def start_lottery():
 
 
 def buy_lotteryTicket(id=None, index=None):
-    account = get_account(id=id)
+    account = get_account(id=id, index=index)
     lottery = Lottery[-1]
     value = lottery.getTicketPrice() + 100000000
     tx = lottery.buyTicket({"from": account, "value": value})
@@ -47,20 +46,53 @@ def end_lottery():
     lottery = Lottery[-1]
     ending_transaction = lottery.endLottery({"from": account})
     ending_transaction.wait(1)
-    time.sleep(20)
+    time.sleep(5)
     print(f"{lottery.last_winner()} is the new winner")
     print(f"{lottery.random_number()}RANDOM")
+    print(f"{lottery.random_index()}index contract")
+    print(f"{lottery.random_number()%6} Index")
 
 
 def main():
-    deploy_oracle()
-    deploy_lottery()
+    lottery = deploy_lottery()
+    input("Press Enter to continue...")
+    print(get_account())
+    print(get_account(index=1))
+    print(get_account(index=2))
+    print(get_account(index=3))
+    print(get_account(index=4))
+    print(get_account(index=5))
     print("Loteria 1")
     print("=========")
     start_lottery()
-    buy_lotteryTicket()
-    buy_lotteryTicket(id=1)
-    buy_lotteryTicket(id=2)
+    buy_lotteryTicket(index=0)
+    buy_lotteryTicket(index=1)
+    buy_lotteryTicket(index=2)
+    buy_lotteryTicket(index=3)
+    buy_lotteryTicket(index=4)
+    buy_lotteryTicket(index=5)
+    end_lottery()
+    input("Press Enter to continue...")
+    print("Loteria 2")
+    print("=========")
+    start_lottery()
+    buy_lotteryTicket(index=0)
+    buy_lotteryTicket(index=1)
+    buy_lotteryTicket(index=2)
+    buy_lotteryTicket(index=3)
+    buy_lotteryTicket(index=4)
+    buy_lotteryTicket(index=5)
+    end_lottery()
+    input("Press Enter to continue...")
+    print("Loteria 3")
+    print("=========")
+    start_lottery()
+    buy_lotteryTicket(index=0)
+    buy_lotteryTicket(index=1)
+    buy_lotteryTicket(index=2)
+    buy_lotteryTicket(index=3)
+    buy_lotteryTicket(index=4)
+    buy_lotteryTicket(index=5)
     end_lottery()
 
     """

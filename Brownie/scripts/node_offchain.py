@@ -2,7 +2,7 @@ import json
 import requests
 from web3 import Web3
 import asyncio
-from brownie import Lottery, Oracle, network, config
+from brownie import Lottery, Oracle, network, config, Contract
 from scripts.helful_scripts import (
     get_account,
     FORKED_LOCAL_ENVIROMENTS,
@@ -10,13 +10,19 @@ from scripts.helful_scripts import (
 )
 
 # add your blockchain connection information
-ganache_url = "http://localhost:8545"
-infura_url = "https://rinkeby.infura.io/v3/85255d60dc214513a8eef637d7c284ce"
-web3 = Web3(Web3.HTTPProvider(infura_url))
+url = ""
+if (
+    network.show_active() in LOCAL_BLOCKCHAIN_ENVIROMENTS
+    or network.show_active() in FORKED_LOCAL_ENVIROMENTS
+):
+    url = "http://localhost:8545"
+    contract_address = "0x02eb41cF728CF28ceDcc28758048291e2d65dc97"
+else:
+    url = "https://rinkeby.infura.io/v3/85255d60dc214513a8eef637d7c284ce"
+    contract_address = str(Lottery[-1])
+web3 = Web3(Web3.HTTPProvider(url))
 
 # Contract address and abi
-
-contract_address = str(Lottery[-1])
 contract_abi = Lottery.abi
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
@@ -35,8 +41,32 @@ def handle_event(event):
     # We get the random_number
     random_number = parse_json["value"]
     print("Random number", random_number)
-    # TESTNET
-    if network.show_active() in FORKED_LOCAL_ENVIROMENTS:
+    if (
+        network.show_active() in LOCAL_BLOCKCHAIN_ENVIROMENTS
+        or network.show_active() in FORKED_LOCAL_ENVIROMENTS
+    ):
+        # GANACHE
+        print("GANACHE")
+        raw_transaction = contract.functions.updateRequest(
+            id, random_number
+        ).buildTransaction(
+            {
+                "from": "0xB5fB12fd8148441fE7Ad208135dC376923Ff349B",
+                "nonce": web3.eth.getTransactionCount(
+                    "0xB5fB12fd8148441fE7Ad208135dC376923Ff349B"
+                ),
+            }
+        )
+        signed = web3.eth.account.signTransaction(
+            raw_transaction,
+            0x2F45E72EAEDFB7F2F9AFA52C1B80D7E69C2BAC1CFD35EE746D2AED93917F397B,
+        )
+        receipt = web3.eth.sendRawTransaction(signed.rawTransaction)
+        web3.eth.waitForTransactionReceipt(receipt)
+
+    else:
+        # TESTNET
+        print("TESTNET")
         raw_transaction = contract.functions.updateRequest(
             id, random_number
         ).buildTransaction(
@@ -53,9 +83,6 @@ def handle_event(event):
         )
         receipt = web3.eth.sendRawTransaction(signed.rawTransaction)
         web3.eth.waitForTransactionReceipt(receipt)
-    # GANACHE
-    else:
-        print("Nada aun")
 
     print("Random number stored in the blockchain")
 

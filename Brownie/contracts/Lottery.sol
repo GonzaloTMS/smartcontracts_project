@@ -12,18 +12,17 @@ contract Lottery is Ownable, Oracle {
         CLOSED,
         PROCESSING
     }
-    address payable[] public lottery_players;
+    address payable[] public lottery_players = new address payable[](0);
     uint256 public usdEntryFee;
     AggregatorV3Interface internal ethUsdPriceFeed;
     STATE public state;
     address payable public last_winner;
     uint256 public random_number;
-    Oracle internal oracleContract;
+    uint256 public random_index;
 
-    constructor(address _priceFeedAddress, address _oracleAddress) public {
+    constructor(address _priceFeedAddress) public {
         usdEntryFee = 5 * (10**18); // 5$
         ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-        oracleContract = Oracle(_oracleAddress);
         state = STATE.CLOSED;
     }
 
@@ -71,7 +70,8 @@ contract Lottery is Ownable, Oracle {
     function fulfillRandomness(uint256 _requestId) internal override {
         require(state == STATE.PROCESSING, "Incorrect State");
         random_number = requests[_requestId].value;
-        uint256 random_index = random_number % lottery_players.length;
+        require(random_number > 0, "Random not found");
+        random_index = random_number % lottery_players.length;
         last_winner = lottery_players[random_index];
         last_winner.transfer(address(this).balance);
         //Reset

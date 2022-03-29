@@ -18,7 +18,9 @@ public class Controller {
 	
 	@GetMapping("/random")
 	public ResponseEntity<RandomNumber> getRandomNumber(){
-		BigInteger random=new BigInteger(256,new Random()); 
+		//BigInteger random=new BigInteger(256,new Random()); 
+		//return new ResponseEntity<RandomNumber>(new RandomNumber(random), HttpStatus.OK);
+		BigInteger random=BigInteger.valueOf(12); 
 		return new ResponseEntity<RandomNumber>(new RandomNumber(random), HttpStatus.OK);
 	}
 	

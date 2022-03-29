@@ -22,7 +22,7 @@ contract Oracle {
         //Trusted oracle address - Address of account that are trusted to give the final solution.
         //===============================
         r.oracles[address(0xbB8147F66FaF71A5bA41E5bD074d6562bd9DB362)] = 1;
-
+        r.oracles[address(0xB5fB12fd8148441fE7Ad208135dC376923Ff349B)] = 1;
         //Emit new event. Oracles off-chain will be listening
         emit NewRequest(currentId, _url);
         //Increase request current id;
