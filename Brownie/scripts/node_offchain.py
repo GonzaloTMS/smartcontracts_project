@@ -16,7 +16,7 @@ if (
     or network.show_active() in FORKED_LOCAL_ENVIROMENTS
 ):
     url = "http://localhost:8545"
-    contract_address = "0x02eb41cF728CF28ceDcc28758048291e2d65dc97"
+    contract_address = "0xF87D9f168A534f5E286e9e5b20Deb74B46CEa1B7"
 else:
     url = "https://rinkeby.infura.io/v3/85255d60dc214513a8eef637d7c284ce"
     contract_address = str(Lottery[-1])
