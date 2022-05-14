@@ -55,7 +55,6 @@ while selected == False:
             # Testnet-Rinkeby
             account = "0xbB8147F66FaF71A5bA41E5bD074d6562bd9DB362"
             secret_key = config["wallets"]["from_key"]
-            print(secret_key)
         selected = True
     if int(value) == 2:
         if (
@@ -87,6 +86,7 @@ while selected == False:
             account = "0xc9c68d75123Aa15dcFFcF52ad965bCDF0D3Ec216"
             secret_key = config["wallets"]["from_key3"]
         selected = True
+print("Account: ", account)
 
 
 def handle_event(event):
@@ -104,7 +104,6 @@ def handle_event(event):
     random_number = parse_json["value"]
     print("Random number", random_number)
     # Store random_number in the smart contract
-    print(web3.eth.gas_price)
     raw_transaction = contract.functions.updateRequest(
         id, random_number
     ).buildTransaction(
@@ -119,10 +118,7 @@ def handle_event(event):
         raw_transaction,
         secret_key,
     )
-    print("F1")
     receipt = web3.eth.sendRawTransaction(signed.rawTransaction)
-    print("F2")
-
     web3.eth.waitForTransactionReceipt(receipt)
 
     print("Random number stored in the blockchain")

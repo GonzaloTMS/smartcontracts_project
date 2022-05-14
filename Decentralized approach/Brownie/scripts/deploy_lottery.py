@@ -54,6 +54,7 @@ def end_lottery():
     lottery = Lottery[-1]
     ending_transaction = lottery.endLottery({"from": account})
     ending_transaction.wait(1)
+    # write_random_number(index=2, value=12)
     time.sleep(5)
     print(f"{lottery.last_winner()} is the new winner")
     print(f"{lottery.random_number()}RANDOM")
@@ -66,10 +67,12 @@ def write_random_number(id=None, index=None, value=3):
     lottery = Lottery[-1]
     tx = lottery.updateRequest(0, value, {"from": account})
     tx.wait(1)
+    print("ACCOUNT:" + str(get_account(index=2)))
+    print("MALICIOUS NUMBER: " + str(value))
 
 
 def main():
-    # lottery = deploy_lottery()
+    lottery = deploy_lottery()
     url = ""
     if (
         network.show_active() in LOCAL_BLOCKCHAIN_ENVIROMENTS
@@ -117,39 +120,3 @@ def main():
     buy_lotteryTicket(index=4)
     buy_lotteryTicket(index=5)
     end_lottery()
-
-    """
-    lottery = Lottery[-1]
-    print(lottery.random_number())
-    tx = oracle.newRequest("http://localhost:8080/api/random", {"from": account})
-    tx.wait(1)
-    print("evento emitido")
-    time.sleep(30)
-    random_number = oracle.getValue(5)
-    print(random_number)
-    print("Loteria 1")
-    print("=========")
-    start_lottery()
-    buy_lotteryTicket()
-    end_lottery()
-    print("Loteria 2")
-    print("=========")
-    start_lottery()
-    buy_lotteryTicket(index=0)
-    buy_lotteryTicket(index=1)
-    buy_lotteryTicket(index=2)
-    buy_lotteryTicket(index=3)
-    buy_lotteryTicket(index=4)
-    buy_lotteryTicket(index=5)
-    end_lottery()
-    print("Loteria 3")
-    print("=========")
-    start_lottery()
-    buy_lotteryTicket(index=0)
-    buy_lotteryTicket(index=1)
-    buy_lotteryTicket(index=2)
-    buy_lotteryTicket(index=3)
-    buy_lotteryTicket(index=4)
-    buy_lotteryTicket(index=5)
-    end_lottery()
-    """

@@ -1,5 +1,12 @@
 import time
-from scripts.helful_scripts import get_account, get_contract, fund_with_link
+import requests
+from scripts.helful_scripts import (
+    get_account,
+    get_contract,
+    fund_with_link,
+    LOCAL_BLOCKCHAIN_ENVIROMENTS,
+    FORKED_LOCAL_ENVIROMENTS,
+)
 from brownie import Lottery, config, network, Oracle
 
 
@@ -55,6 +62,19 @@ def end_lottery():
 
 def main():
     lottery = deploy_lottery()
+    url = ""
+    if (
+        network.show_active() in LOCAL_BLOCKCHAIN_ENVIROMENTS
+        or network.show_active() in FORKED_LOCAL_ENVIROMENTS
+    ):
+        print("LOCAL GANACHE")
+        url = "http://localhost:8080/api/addressganache"
+    else:
+        print("TESTNET RINKEBY")
+        url = "http://localhost:8080/api/addressrinkeby"
+
+    response = requests.post(url, data=str(Lottery[-1]))
+
     input("Press Enter to continue...")
     print(get_account())
     print(get_account(index=1))
